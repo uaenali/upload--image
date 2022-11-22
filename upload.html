@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      canvas {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <input type="file" id="file" />
+    </div>
+    <canvas id="canvas"></canvas>
+    <script>
+      const CANVAS_WIDTH = 600;
+      const file = document.getElementById("file");
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = CANVAS_WIDTH;
+
+      file.onchange = function () {
+        const fileData = this.files[0];
+        const pattern = /^image/;
+
+        if (!pattern.test(fileData.type)) {
+          alert("图片格式不正确");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(fileData); //异步读取文件内容，结果用data:url的字符串形式表示
+
+        // 当读取操作成功完成时调用
+        reader.onload = function (e) {
+          // draw upload image
+          const backgroundImage = new Image();
+          backgroundImage.src = this.result;
+          backgroundImage.onload = function () {
+            const { width, height } = this;
+            const ratio = width / height;
+            const canvas_height = 600 / ratio;
+            canvas.height = canvas_height;
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+            // draw qrcode
+            const qrcode = new Image();
+            qrcode.src = "data:image/png;base64,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"
+            qrcode.onload = function () {
+                ctx.drawImage(
+                    qrcode,
+                    canvas.width - 114,
+                    canvas.height - 114,
+                    100,
+                    100
+                );
+                // draw title
+                ctx.font = "16px ui-sans-serif";
+                ctx.fillStyle = "#fff";
+                ctx.fillText("演示Demo", 10, canvas.height - 36);
+                // draw author
+                ctx.font = "12px ui-sans-serif";
+                ctx.fillStyle = "#fff";
+                ctx.fillText("By 辣条亲自", 10, canvas.height - 14);
+            };
+          };
+        };
+      };
+    </script>
+  </body>
+</html>
